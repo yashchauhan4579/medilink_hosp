@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head><title>WS Test</title></head>
+<body style="background:#111;color:#fff;font-family:monospace">
+<h2>WebSocket Feed Test</h2>
+<div id="log"></div>
+<img id="frame" style="max-width:640px;border:2px solid lime">
+<script>
+const log = document.getElementById('log');
+const img = document.getElementById('frame');
+const ws = new WebSocket('ws://' + location.host + '/ws/feed/3');
+ws.binaryType = 'arraybuffer';
+let count = 0;
+ws.onopen = () => { log.innerHTML += '<p style="color:lime">Connected!</p>'; };
+ws.onmessage = (e) => {
+    count++;
+    const data = new Uint8Array(e.data);
+    const jsonLen = data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
+    const jpegBytes = data.slice(4 + jsonLen);
+    const blob = new Blob([jpegBytes], {type: 'image/jpeg'});
+    const url = URL.createObjectURL(blob);
+    img.onload = () => URL.revokeObjectURL(url);
+    img.src = url;
+    if (count <= 5 || count % 30 === 0) {
+        log.innerHTML += '<p>Frame ' + count + ': ' + data.length + ' bytes, JPEG: ' + jpegBytes.length + ' bytes</p>';
+    }
+};
+ws.onclose = () => { log.innerHTML += '<p style="color:red">Disconnected</p>'; };
+ws.onerror = () => { log.innerHTML += '<p style="color:red">Error</p>'; };
+</script>
+</body>
+</html>

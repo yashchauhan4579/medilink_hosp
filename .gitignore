@@ -1,0 +1,29 @@
+__pycache__/
+*.pyc
+*.pyo
+
+# Model binaries
+*.engine
+*.onnx
+*.pt
+*.tflite
+*.csv
+
+# Runtime data
+data/
+*.db
+*.db-shm
+*.db-wal
+*.jpg
+*.mp4
+
+# Frontend build
+frontend/dist/
+frontend/node_modules/
+
+# Environment
+.env
+
+# OS
+.DS_Store
+Thumbs.db
